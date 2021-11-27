@@ -21,7 +21,7 @@ def cross_validate(train):
     [month, region, brand, sales, lower, upper]
     and the [month, region, brand] entries have to correspond to df_val. 
     """
-    nrFolds = 5
+    nrFolds = 4
     folds = {}
     regions = df_sales_train[
         df_sales_train.brand.isin(["brand_1", "brand_2"])
