@@ -14,7 +14,9 @@ df_sales_train = pd.read_csv(
 df_sales_train = df_sales_train[df_sales_train.brand.isin(["brand_1", "brand_2"])]
 
 
-def create_submission(features, clf, ci, filename="upload_novartis.csv"):
+def create_submission(
+    features, clf, ci, goal="sales", brand3_data=False, filename="upload_novartis.csv"
+):
     """
     Usage: 
         create_submission(
@@ -24,17 +26,20 @@ def create_submission(features, clf, ci, filename="upload_novartis.csv"):
         )
     """
 
-    print(
-        cross_validate(
-            lambda df_train, df_val: train_and_eval_clf(
-                df_train, df_val, features=features, clf=clf, ci=ci
-            )
+    def train(df_train, df_val):
+        return train_and_eval_clf(
+            df_train,
+            df_val,
+            features=features,
+            clf=clf,
+            ci=ci,
+            goal=goal,
+            brand3_data=brand3_data,
         )
-    )
 
-    df_submission_final = train_and_eval_clf(
-        df_sales_train, df_submission, features=features, clf=clf, ci=ci
-    )
+    print(cross_validate(train))
+
+    df_submission_final = train(df_sales_train, df_submission)
 
     df_submission_final.sort_values(["month", "region", "brand"], inplace=True)
     df_submission_final = df_submission_final[df_submission_final.month >= "2020-07"]
