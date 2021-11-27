@@ -1,12 +1,31 @@
 from novDatathon.src.metric_participants import ComputeMetrics
 from sklearn.model_selection import KFold
 import numpy as np
+import pandas as pd
+import os
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+df_sales_train = pd.read_csv(
+    os.path.join(current_dir, "../data/data_files/sales_train.csv")
+)
 
 
-def cross_validate(df_sales_train, train):
+def cross_validate(train):
+    """
+    train: a function with inputs
+    * df_train: the training data as a DataFrame with columns [month, region, brand, sales]
+                (note: brand will be 'brand_1' or 'brand_2', but nothing else)
+    * df_val:   the validation data as a DataFrame with columns [month, region, brand]
+                (same here: always 'brand_1' or 'brand_2')
+    The function train has to return a DataFrame with the columns 
+    [month, region, brand, sales, lower, upper]
+    and the [month, region, brand] entries have to correspond to df_val. 
+    """
     nrFolds = 5
     folds = {}
-    regions = df_sales_train[df_sales_train.brand == "brand_1"].region.unique()
+    regions = df_sales_train[
+        df_sales_train.brand.isin(["brand_1", "brand_2"])
+    ].region.unique()
     kfold = KFold(n_splits=nrFolds, shuffle=True, random_state=991)
     for i, indices in enumerate(kfold.split(regions)):
         trainIndex, testIndex = indices

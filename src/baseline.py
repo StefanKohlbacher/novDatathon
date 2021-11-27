@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def train_baseline(df_train, df_val):
+def train_baseline(df_train, df_val, q=0.1):
     mean_sales_brand_1 = (
         df_train[df_train.brand == "brand_1"].groupby("month").sales.mean()
     )
@@ -9,7 +9,7 @@ def train_baseline(df_train, df_val):
         df_train[df_train.brand == "brand_1"].groupby("month").sales.quantile(0.1)
     )
     upper_brand_1 = (
-        df_train[df_train.brand == "brand_1"].groupby("month").sales.quantile(0.9)
+        df_train[df_train.brand == "brand_1"].groupby("month").sales.quantile(1 - q)
     )
 
     mean_sales_brand_2 = (
@@ -19,7 +19,7 @@ def train_baseline(df_train, df_val):
         df_train[df_train.brand == "brand_2"].groupby("month").sales.quantile(0.1)
     )
     upper_brand_2 = (
-        df_train[df_train.brand == "brand_2"].groupby("month").sales.quantile(0.9)
+        df_train[df_train.brand == "brand_2"].groupby("month").sales.quantile(1 - q)
     )
 
     def dummy_submission_region(region, brand):
